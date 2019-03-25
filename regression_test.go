@@ -51,3 +51,63 @@ func TestVectorSquares(t *testing.T) {
 	}
 
 }
+
+func TestSumVector(t *testing.T) {
+	in := []float64{1.2, 23.23, 30000}
+	want := 30024.43
+	res, err := SumVector(in)
+	if err != nil {
+		t.Errorf("error should be nil,  got: %s", err)
+	}
+	if res != want {
+		t.Errorf("incorrect output, want: %e, got: %e", want, res)
+	}
+	fmt.Println("TestComputeVectorSum completed")
+
+}
+
+func TestComputeVectorMean(t *testing.T) {
+	in := []float64{1.2, 23.23, 30000}
+	want := 30024.43 / 3
+	res, err := ComputeVectorMean(in)
+	if err != nil {
+		t.Errorf("error should be nil,  got: %s", err)
+	}
+	if res != want {
+		t.Errorf("incorrect output, want: %e, got: %e", want, res)
+	}
+	fmt.Println("TestComputeVectorMean completed")
+
+}
+
+func Testvariance(t *testing.T) {
+	return
+}
+
+func TestComputeVectorVariance(t *testing.T) {
+	in := []float64{1.2, 23.23, 30000}
+	want := 299755871.0
+	res, err := ComputeVectorVariance(in)
+	if err != nil {
+		t.Errorf("error should be nil,  got: %s", err)
+	}
+	if res != want {
+		t.Errorf("incorrect output, want: %e, got: %e", want, res)
+	}
+	fmt.Println("TestComputeVectorVariance completed")
+
+}
+
+func TestCovariance(t *testing.T) {
+	in1 := []float64{1, 2, 3.3}
+	in2 := []float64{1, 2323, 22.1}
+	// Look this up in book
+	want := -103.4400 //-68.9600
+	res, err := covariance(in1, in2)
+	if err != nil {
+		t.Errorf("error wanted : nil, raised: %e ", err)
+	}
+	if res != want {
+		t.Errorf("incorrect output, want: %e, got: %e", want, res)
+	}
+}
