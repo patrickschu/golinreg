@@ -31,7 +31,6 @@ func GetErrors(preds, truth []float64) ([]float64, error) {
 		diff := t - preds[ind]
 		outputDiffs = append(outputDiffs, diff)
 	}
-	fmt.Println(outputDiffs)
 	return outputDiffs, nil
 }
 
@@ -69,35 +68,62 @@ func ComputeVectorMean(x []float64) (float64, error) {
 	return mean, nil
 }
 
-func variance(xval float64, mean float64) float64 {
-	// 	variance = sum( (x - mean(x))^2 )
-	diff := xval - mean
-	return diff * diff
-}
+//# calculate mean
+//m = sum(results) / len(results)
+
+//# calculate variance using a list comprehension
+//var_res = sum((xi - m) ** 2 for xi in results) / len(results)
 
 //ComputeVectorVariance returns vector of variances for x
-func ComputeVectorVariance(x []float64) ([]float64, error) {
-	outputVariances := make([]float64, 0)
+func ComputeVectorVariance(x []float64) (float64, error) {
+	diffs := make([]float64, len(x))
 	meanx, _ := ComputeVectorMean(x)
-	for _, number := range x {
-		outputVariances = append(outputVariances, variance(number, meanx))
+	//subtract meanx from each item in x, this we can outsource
+	for ind, number := range x {
+		diff := number - meanx
+		diffs[ind] = diff * diff
 	}
-	print("variances", outputVariances)
-	return outputVariances, nil
+	variance, _ := SumVector(diffs)
+	return variance / float64(len(x)-1), nil
 }
 
-func covariance(x, y []float64) (float64, error) {
-	var covar float64
-	// covariance = sum((x(i) - mean(x)) * (y(i) - mean(y)))
+func AddtoVector(x []float64, add float64) ([]float64, error) {
+	outputVector := make([]float64, len(x))
+	for ind, number := range x {
+		result := number + add
+		fmt.Println("number", number, "out", result)
+		outputVector[ind] = result
+	}
+	return outputVector, nil
+}
+
+//Compute the covariance between two vectors
+/*
+Cov(X,Y) = Σ E((X-μ)E(Y-ν)) / n-1 where:
+X is a random variable
+E(X) = μ is the expected value (the mean) of the random variable X and
+E(Y) = ν is the expected value (the mean) of the random variable Y
+n = the number of items in the data set
+*/
+
+func ComputeVectorCovariance(x, y []float64) (float64, error) {
 	meanx, _ := ComputeVectorMean(x)
 	meany, _ := ComputeVectorMean(y)
-	for ind, number := range x {
-		xval := number - meanx
-		yval := y[ind] - meany
-		covar += (xval * yval)
-	}
-	fmt.Println("covar is", covar)
-	return covar, nil
+	//make vector of x-meanz, y-meany
+	diffx, _ := AddtoVector(x, -meanx)
+	diffy, _ := AddtoVector(y, -meany)
+	fmt.Println("diffx", diffx)
+	fmt.Println("diffy", diffy)
+	//get the mean
+	meanDiffy, _ := ComputeVectorMean(diffy)
+	meanDiffx, _ := ComputeVectorMean(diffx)
+	fmt.Println("mean diff x", meanDiffx)
+	fmt.Println("mean diff y", meanDiffy)
+	//The -1 part below we should make input
+	fmt.Println(meanDiffx * meanDiffy)
+	coVar := meanDiffx * meanDiffy / (float64(len(x)) - 1)
+	return coVar, nil
+
 }
 
 //Regressor fits LinReg struct on input values x and output y
