@@ -85,29 +85,54 @@ func Testvariance(t *testing.T) {
 }
 
 func TestComputeVectorVariance(t *testing.T) {
-	in := []float64{1.2, 23.23, 30000}
-	want := 299755871.0
-	res, err := ComputeVectorVariance(in)
-	if err != nil {
-		t.Errorf("error should be nil,  got: %s", err)
-	}
-	if res != want {
-		t.Errorf("incorrect output, want: %e, got: %e", want, res)
+	feat0 := []float64{1.2, 2.4, 3}
+	want0 := 0.8400000000000001
+	feat1 := []float64{12, 3, 44}
+	want1 := 464.33333333333337
+	feat2 := []float64{24, 7, 88}
+	want2 := 1824.3333333333333
+	ins := [][]float64{feat0, feat1, feat2}
+	wants := []float64{want0, want1, want2}
+	for ind, input := range ins {
+		res, err := ComputeVectorVariance(input)
+		if err != nil {
+			t.Errorf("error should be nil,  got: %s", err)
+		}
+		if res != wants[ind] {
+			fmt.Println(res)
+			fmt.Println(wants[ind])
+			t.Errorf("incorrect output, want: %e, got: %e", wants[ind], res)
+		}
+
 	}
 	fmt.Println("TestComputeVectorVariance completed")
+}
+
+//this to compare two vectors of numbers for ID
+func comparevectors(x, y []float64) error {
+	for ind, number := range x {
+		if number != y[ind] {
+			return fmt.Errorf("compare vectors, mismatch at ind %d : %f != %f", ind, number, y[ind])
+		}
+	}
+	return nil
+}
+
+func TestAddtoVector(t *testing.T) {
+	have := []float64{1, 2.2, -3}
+	want := []float64{0, 1.2, -4}
+	res, _ := AddtoVector(have, -1)
+	//if the below is not Nil we want to break th
+	comparevectors(res, want)
 
 }
 
-func TestCovariance(t *testing.T) {
-	in1 := []float64{1, 2, 3.3}
-	in2 := []float64{1, 2323, 22.1}
-	// Look this up in book
-	want := -103.4400 //-68.9600
-	res, err := covariance(in1, in2)
-	if err != nil {
-		t.Errorf("error wanted : nil, raised: %e ", err)
-	}
-	if res != want {
-		t.Errorf("incorrect output, want: %e, got: %e", want, res)
-	}
+func TestComputeVectorCovariance(t *testing.T) {
+	feat1 := []float64{12, 3, 44}
+	feat2 := []float64{24, 7, 88}
+	// 920.3333
+	//want := 920.3333
+	res, _ := ComputeVectorCovariance(feat2, feat1)
+	fmt.Println("covar res", res)
+
 }
