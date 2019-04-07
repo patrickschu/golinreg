@@ -5,7 +5,15 @@ import (
 	"testing"
 )
 
-//try these tests
+//helper: this to compare two vectors of numbers for ID
+func comparevectors(x, y []float64) error {
+	for ind, number := range x {
+		if number != y[ind] {
+			return fmt.Errorf("compare vectors, mismatch at ind %d : %f != %f", ind, number, y[ind])
+		}
+	}
+	return nil
+}
 
 func TestGetErrors(t *testing.T) {
 	//Error out if length different
@@ -80,10 +88,6 @@ func TestComputeVectorMean(t *testing.T) {
 
 }
 
-func Testvariance(t *testing.T) {
-	return
-}
-
 func TestComputeVectorVariance(t *testing.T) {
 	feat0 := []float64{1.2, 2.4, 3}
 	want0 := 0.8400000000000001
@@ -108,16 +112,6 @@ func TestComputeVectorVariance(t *testing.T) {
 	fmt.Println("TestComputeVectorVariance completed")
 }
 
-//this to compare two vectors of numbers for ID
-func comparevectors(x, y []float64) error {
-	for ind, number := range x {
-		if number != y[ind] {
-			return fmt.Errorf("compare vectors, mismatch at ind %d : %f != %f", ind, number, y[ind])
-		}
-	}
-	return nil
-}
-
 func TestAddtoVector(t *testing.T) {
 	have := []float64{1, 2.2, -3}
 	want := []float64{0, 1.2, -4}
@@ -130,9 +124,39 @@ func TestAddtoVector(t *testing.T) {
 func TestComputeVectorCovariance(t *testing.T) {
 	feat1 := []float64{12, 3, 44}
 	feat2 := []float64{24, 7, 88}
-	// 920.3333
-	//want := 920.3333
-	res, _ := ComputeVectorCovariance(feat2, feat1)
-	fmt.Println("covar res", res)
+	feat3 := []float64{1, 2}
+	want := 920.3333333333333
+	// test wrong input
+	_, err := ComputeVectorCovariance(feat2, feat3)
+	if err == nil {
+		t.Errorf("different input len, error: %s want: raised", err)
+	}
+	// test legit input
+	res2, err2 := ComputeVectorCovariance(feat2, feat1)
+	if err2 != nil {
+		t.Errorf("returns error %s , want: not raised", err)
+	}
+	if res2 != want {
+		t.Errorf("incorrect output, want: %e, got: %e", want, res2)
+	}
+}
 
+func TestRegressor(t *testing.T) {
+	feat1 := [][]float64{[]float64{12, 3, 44}}
+	y := []float64{24, 7, 88}
+	wantedIntercept := 0.6862885857860732
+	wantedWeight := 1.98205312275664
+	//y := []float64{18, 4.5, 66.0}
+	model, err := Regressor(feat1, y)
+	if err != nil {
+		t.Errorf("error is %s, want: not raised", err)
+	}
+	fmt.Println("\nmodel", model)
+	if model.intercept != wantedIntercept {
+		t.Errorf("wrong intercept output: is %e, want: %e", model.intercept, wantedIntercept)
+
+	}
+	if model.coefs[0] != wantedWeight {
+		t.Errorf("wrong coef output: is %e, want: %e", model.coefs[0], wantedWeight)
+	}
 }
