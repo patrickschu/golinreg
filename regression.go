@@ -4,6 +4,7 @@ package regression
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 /*
@@ -68,12 +69,6 @@ func ComputeVectorMean(x []float64) (float64, error) {
 	return mean, nil
 }
 
-//# calculate mean
-//m = sum(results) / len(results)
-
-//# calculate variance using a list comprehension
-//var_res = sum((xi - m) ** 2 for xi in results) / len(results)
-
 //ComputeVectorVariance returns variance for x
 func ComputeVectorVariance(x []float64) (float64, error) {
 	diffs := make([]float64, len(x))
@@ -84,7 +79,24 @@ func ComputeVectorVariance(x []float64) (float64, error) {
 		diffs[ind] = diff * diff
 	}
 	variance, _ := SumVector(diffs)
-	return variance / float64(len(x)-1), nil
+	return variance, nil
+}
+
+func VectorStdev(x []float64) (float64, error) {
+	variance, err := ComputeVectorVariance(x)
+	return math.Sqrt(variance), err
+}
+
+//VectorCorrelation computes the correlation between to inputs
+func VectorCorrelation(x []float64, y []float64) (float64, error) {
+	stdevx, _ := VectorStdev(x)
+	stdevy, _ := VectorStdev(y)
+	if stdevx == 0 || stdevy == 0 {
+		return 0.0, nil
+	}
+	covar, _ := ComputeVectorCovariance(x, y)
+	correlation := covar / stdevx / stdevy
+	return correlation, nil
 }
 
 func AddtoVector(x []float64, add float64) ([]float64, error) {
@@ -110,24 +122,8 @@ E(Y) = ν is the expected value (the mean) of the random variable Y
 n = the number of items in the data set
 
 
-from numpy
-sum items in m along colums
->>> m -= np.sum(m * w, axis=1, keepdims=True) / v1
-multiply the summed items with transpose
->>> cov = np.dot(m * w, m.T) * v1 / (v1**2 - ddof * v2)
-
-Calculate covariance for the following data set:
-x: 2.1, 2.5, 3.6, 4.0 (mean = 3.1)
-y: 8, 10, 12, 14 (mean = 11)
-
-Substitute the values into the formula and solve:
-Cov(X,Y) = ΣE((X-μ)(Y-ν)) / n-1
-= (2.1-3.1)(8-11)+(2.5-3.1)(10-11)+(3.6-3.1)(12-11)+(4.0-3.1)(14-11) /(4-1)
-= (-1)(-3) + (-0.6)(-1)+(.5)(1)+(0.9)(3) / 3
-= 3 + 0.6 + .5 + 2.7 / 3
-= 6.8/3
-= 2.267
 */
+
 // ComputeVectorCovariance returns covariance between x and y (uses n-1)
 func ComputeVectorCovariance(x, y []float64) (float64, error) {
 	if len(x) != len(y) {
@@ -149,27 +145,25 @@ func ComputeVectorCovariance(x, y []float64) (float64, error) {
 }
 
 //Regressor fits LinReg struct on input values x and output y
-func Regressor(x [][]float64, y []float64) (LinReg, error) {
+func Regressor(x []float64, y []float64) (LinReg, error) {
 	//takes in x, y returns fitted LinReg
 	meany, _ := ComputeVectorMean(y)
-	weights := make([]float64, len(x))
+	meanx, _ := ComputeVectorMean(x)
 	var intercept float64
-
-	for ind, vec := range x {
-		variance, err := ComputeVectorVariance(vec)
-		covar, err := ComputeVectorCovariance(vec, y)
-		if err != nil {
-			fmt.Errorf("Regressor: Covariance returns %s", err)
-			return LinReg{}, err
-		}
-		weight := (covar / variance)
-		weights[ind] = weight
-		meanx, _ := ComputeVectorMean(vec)
-		intercept = meany - (weight * meanx)
-		fmt.Printf("weight is %e", weight)
-		fmt.Printf("intercept is %e", intercept)
+	//correlation (x,y) * stdev(y) / stdev(x)
+	//weight := (covar / variance)
+	correlation, err := VectorCorrelation(x, y)
+	if err != nil {
+		fmt.Errorf("Regressor: Correlation returns %s", err)
+		return LinReg{}, err
 	}
-	return LinReg{intercept, weights}, nil
+	stdevx, _ := VectorStdev(x)
+	stdevy, _ := VectorStdev(y)
+	weight := correlation / stdevx / stdevy
+	intercept = meany - (weight * meanx)
+	fmt.Printf("weight is %e", weight)
+	fmt.Printf("intercept is %e", intercept)
+	return LinReg{intercept, []float64{weight}}, nil
 }
 
 // Coefs
