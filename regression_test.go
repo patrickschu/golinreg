@@ -15,6 +15,12 @@ func comparevectors(x, y []float64) error {
 	return nil
 }
 
+func TestVectorCorrelation(t *testing.T) {
+}
+
+func TestVectorStdev(t *testing.T) {
+}
+
 func TestGetErrors(t *testing.T) {
 	//Error out if length different
 	got, err := GetErrors([]float64{1, 2, 3}, []float64{100, 200})
@@ -142,7 +148,7 @@ func TestComputeVectorCovariance(t *testing.T) {
 }
 
 func TestRegressor(t *testing.T) {
-	feat1 := [][]float64{[]float64{12, 3, 44}}
+	feat1 := []float64{12, 3, 44}
 	y := []float64{24, 7, 88}
 	wantedIntercept := 0.6862885857860732
 	wantedWeight := 1.98205312275664
