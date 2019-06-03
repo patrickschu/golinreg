@@ -18,7 +18,7 @@ func comparevectors(x, y []float64) error {
 func TestVectorCorrelation(t *testing.T) {
 }
 
-func TestVectorStdev(t *testing.T) {
+func TestStdev(t *testing.T) {
 }
 
 func TestGetErrors(t *testing.T) {
@@ -94,29 +94,29 @@ func TestComputeVectorMean(t *testing.T) {
 
 }
 
-func TestVariance(t *testing.T) {
-	feat0 := []float64{1.2, 2.4, 3}
-	want0 := 0.8400000000000001
-	feat1 := []float64{12, 3, 44}
-	want1 := 464.33333333333337
-	feat2 := []float64{24, 7, 88}
-	want2 := 1824.3333333333333
-	ins := [][]float64{feat0, feat1, feat2}
-	wants := []float64{want0, want1, want2}
-	for ind, input := range ins {
-		res, err := Variance(input)
-		if err != nil {
-			t.Errorf("error should be nil,  got: %s", err)
-		}
-		if res != wants[ind] {
-			fmt.Println(res)
-			fmt.Println(wants[ind])
-			t.Errorf("incorrect output, want: %e, got: %e", wants[ind], res)
-		}
+// func TestVariance(t *testing.T) {
+// 	feat0 := []float64{1.2, 2.4, 3}
+// 	want0 := 0.8400000000000001
+// 	feat1 := []float64{12, 3, 44}
+// 	want1 := 464.33333333333337
+// 	feat2 := []float64{24, 7, 88}
+// 	want2 := 1824.3333333333333
+// 	ins := [][]float64{feat0, feat1, feat2}
+// 	wants := []float64{want0, want1, want2}
+// 	for ind, input := range ins {
+// 		res, err := Variance(input)
+// 		if err != nil {
+// 			t.Errorf("error should be nil,  got: %s", err)
+// 		}
+// 		if res != wants[ind] {
+// 			fmt.Println(res)
+// 			fmt.Println(wants[ind])
+// 			t.Errorf("incorrect output, want: %e, got: %e", wants[ind], res)
+// 		}
 
-	}
-	fmt.Println("TestVariance completed")
-}
+// 	}
+// 	fmt.Println("TestVariance completed")
+// }
 
 func TestAddtoVector(t *testing.T) {
 	have := []float64{1, 2.2, -3}
@@ -147,22 +147,22 @@ func TestCovariance(t *testing.T) {
 	}
 }
 
-func TestRegressor(t *testing.T) {
-	feat1 := []float64{12, 3, 44}
-	y := []float64{24, 7, 88}
-	wantedIntercept := 0.6862885857860732
-	wantedWeight := 1.98205312275664
-	//y := []float64{18, 4.5, 66.0}
-	model, err := Regressor(feat1, y)
-	if err != nil {
-		t.Errorf("error is %s, want: not raised", err)
-	}
-	fmt.Println("\nmodel", model)
-	if model.intercept != wantedIntercept {
-		t.Errorf("wrong intercept output: is %e, want: %e", model.intercept, wantedIntercept)
+// func TestRegressor(t *testing.T) {
+// 	feat1 := []float64{12, 3, 44}
+// 	y := []float64{24, 7, 88}
+// 	wantedIntercept := 0.6862885857860732
+// 	wantedWeight := 1.98205312275664
+// 	//y := []float64{18, 4.5, 66.0}
+// 	model, err := Regressor(feat1, y)
+// 	if err != nil {
+// 		t.Errorf("error is %s, want: not raised", err)
+// 	}
+// 	fmt.Println("\nmodel", model)
+// 	if model.intercept != wantedIntercept {
+// 		t.Errorf("wrong intercept output: is %e, want: %e", model.intercept, wantedIntercept)
 
-	}
-	if model.coefs[0] != wantedWeight {
-		t.Errorf("wrong coef output: is %e, want: %e", model.coefs[0], wantedWeight)
-	}
-}
+// 	}
+// 	if model.coefs[0] != wantedWeight {
+// 		t.Errorf("wrong coef output: is %e, want: %e", model.coefs[0], wantedWeight)
+// 	}
+// }
