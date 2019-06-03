@@ -83,7 +83,7 @@ func TestSumVector(t *testing.T) {
 func TestComputeVectorMean(t *testing.T) {
 	in := []float64{1.2, 23.23, 30000}
 	want := 30024.43 / 3
-	res, err := ComputeVectorMean(in)
+	res, err := Mean(in)
 	if err != nil {
 		t.Errorf("error should be nil,  got: %s", err)
 	}
@@ -94,7 +94,7 @@ func TestComputeVectorMean(t *testing.T) {
 
 }
 
-func TestComputeVectorVariance(t *testing.T) {
+func TestVariance(t *testing.T) {
 	feat0 := []float64{1.2, 2.4, 3}
 	want0 := 0.8400000000000001
 	feat1 := []float64{12, 3, 44}
@@ -104,7 +104,7 @@ func TestComputeVectorVariance(t *testing.T) {
 	ins := [][]float64{feat0, feat1, feat2}
 	wants := []float64{want0, want1, want2}
 	for ind, input := range ins {
-		res, err := ComputeVectorVariance(input)
+		res, err := Variance(input)
 		if err != nil {
 			t.Errorf("error should be nil,  got: %s", err)
 		}
@@ -115,7 +115,7 @@ func TestComputeVectorVariance(t *testing.T) {
 		}
 
 	}
-	fmt.Println("TestComputeVectorVariance completed")
+	fmt.Println("TestVariance completed")
 }
 
 func TestAddtoVector(t *testing.T) {
@@ -127,18 +127,18 @@ func TestAddtoVector(t *testing.T) {
 
 }
 
-func TestComputeVectorCovariance(t *testing.T) {
+func TestCovariance(t *testing.T) {
 	feat1 := []float64{12, 3, 44}
 	feat2 := []float64{24, 7, 88}
 	feat3 := []float64{1, 2}
 	want := 920.3333333333333
 	// test wrong input
-	_, err := ComputeVectorCovariance(feat2, feat3)
+	_, err := Covariance(feat2, feat3)
 	if err == nil {
 		t.Errorf("different input len, error: %s want: raised", err)
 	}
 	// test legit input
-	res2, err2 := ComputeVectorCovariance(feat2, feat1)
+	res2, err2 := Covariance(feat2, feat1)
 	if err2 != nil {
 		t.Errorf("returns error %s , want: not raised", err)
 	}
