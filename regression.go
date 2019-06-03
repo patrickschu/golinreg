@@ -62,17 +62,17 @@ func SumVector(x []float64) (float64, error) {
 	return sum, nil
 }
 
-func ComputeVectorMean(x []float64) (float64, error) {
+func Mean(x []float64) (float64, error) {
 	//sum
 	vectorsum, _ := SumVector(x)
 	mean := vectorsum / float64(len(x))
 	return mean, nil
 }
 
-//ComputeVectorVariance returns variance for x
-func ComputeVectorVariance(x []float64) (float64, error) {
+//Variance returns variance for x
+func Variance(x []float64) (float64, error) {
 	diffs := make([]float64, len(x))
-	meanx, _ := ComputeVectorMean(x)
+	meanx, _ := Mean(x)
 	//subtract meanx from each item in x, this we can outsource
 	for ind, number := range x {
 		diff := number - meanx
@@ -82,23 +82,25 @@ func ComputeVectorVariance(x []float64) (float64, error) {
 	return variance, nil
 }
 
-func VectorStdev(x []float64) (float64, error) {
-	variance, err := ComputeVectorVariance(x)
+//Stdev returns standard deviation of x
+func Stdev(x []float64) (float64, error) {
+	variance, err := Variance(x)
 	return math.Sqrt(variance), err
 }
 
-//VectorCorrelation computes the correlation between to inputs
-func VectorCorrelation(x []float64, y []float64) (float64, error) {
-	stdevx, _ := VectorStdev(x)
-	stdevy, _ := VectorStdev(y)
+//Correlation computes the correlation between to inputs
+func Correlation(x []float64, y []float64) (float64, error) {
+	stdevx, _ := Stdev(x)
+	stdevy, _ := Stdev(y)
 	if stdevx == 0 || stdevy == 0 {
 		return 0.0, nil
 	}
-	covar, _ := ComputeVectorCovariance(x, y)
+	covar, _ := Covariance(x, y)
 	correlation := covar / stdevx / stdevy
 	return correlation, nil
 }
 
+//AddtoVector adds number `add` to every item in x
 func AddtoVector(x []float64, add float64) ([]float64, error) {
 	outputVector := make([]float64, len(x))
 	for ind, number := range x {
@@ -124,14 +126,14 @@ n = the number of items in the data set
 
 */
 
-// ComputeVectorCovariance returns covariance between x and y (uses n-1)
-func ComputeVectorCovariance(x, y []float64) (float64, error) {
+// Covariance between x and y (uses n-1)
+func Covariance(x, y []float64) (float64, error) {
 	if len(x) != len(y) {
 		return 0, fmt.Errorf(
-			"ComputeVectorCovariance: input vectors are len %d , %d, needs to be ==", len(x), len(y))
+			"Covariance: input vectors are len %d , %d, needs to be ==", len(x), len(y))
 	}
-	meanx, _ := ComputeVectorMean(x)
-	meany, _ := ComputeVectorMean(y)
+	meanx, _ := Mean(x)
+	meany, _ := Mean(y)
 	outvector := make([]float64, len(x))
 	//make vector of x-meanz, y-meany
 	for ind, number := range x {
@@ -147,18 +149,18 @@ func ComputeVectorCovariance(x, y []float64) (float64, error) {
 //Regressor fits LinReg struct on input values x and output y
 func Regressor(x []float64, y []float64) (LinReg, error) {
 	//takes in x, y returns fitted LinReg
-	meany, _ := ComputeVectorMean(y)
-	meanx, _ := ComputeVectorMean(x)
+	meany, _ := Mean(y)
+	meanx, _ := Mean(x)
 	var intercept float64
 	//correlation (x,y) * stdev(y) / stdev(x)
 	//weight := (covar / variance)
-	correlation, err := VectorCorrelation(x, y)
+	correlation, err := Correlation(x, y)
 	if err != nil {
 		fmt.Errorf("Regressor: Correlation returns %s", err)
 		return LinReg{}, err
 	}
-	stdevx, _ := VectorStdev(x)
-	stdevy, _ := VectorStdev(y)
+	stdevx, _ := Stdev(x)
+	stdevy, _ := Stdev(y)
 	weight := correlation / stdevx / stdevy
 	intercept = meany - (weight * meanx)
 	fmt.Printf("weight is %e", weight)
