@@ -69,8 +69,8 @@ func Mean(x []float64) (float64, error) {
 	return mean, nil
 }
 
-//Variance returns variance for x
-func Variance(x []float64) (float64, error) {
+//Variance returns variance for x; nCorrect is subtracted from denominator ie needs to be 1 to match R
+func Variance(x []float64, nCorrect int) (float64, error) {
 	diffs := make([]float64, len(x))
 	meanx, _ := Mean(x)
 	//subtract meanx from each item in x, this we can outsource
@@ -78,13 +78,14 @@ func Variance(x []float64) (float64, error) {
 		diff := number - meanx
 		diffs[ind] = diff * diff
 	}
-	variance, _ := SumVector(diffs)
+	sum, _ := SumVector(diffs)
+	variance := sum / float64(len(x)-nCorrect)
 	return variance, nil
 }
 
 //Stdev returns standard deviation of x
 func Stdev(x []float64) (float64, error) {
-	variance, err := Variance(x)
+	variance, err := Variance(x, 1)
 	return math.Sqrt(variance), err
 }
 
@@ -161,7 +162,7 @@ func Regressor(x []float64, y []float64) (LinReg, error) {
 	}
 	stdevx, _ := Stdev(x)
 	stdevy, _ := Stdev(y)
-	weight := correlation / stdevx / stdevy
+	weight := correlation * (stdevy / stdevx)
 	intercept = meany - (weight * meanx)
 	fmt.Printf("weight is %e", weight)
 	fmt.Printf("intercept is %e", intercept)
