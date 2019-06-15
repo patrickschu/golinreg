@@ -33,7 +33,7 @@ func ReadCsvRows(inputFilePath string) (map[int64][]string, error) {
 	return dataframe, nil
 }
 
-//readCsvCols reads file from `inputFilePath` and stores in map by col
+//ReadCsvCols reads file from `inputFilePath` and stores in map by col
 func ReadCsvCols(inputFilePath string) (map[int][]string, error) {
 	dataframe := make(map[int][]string)
 	fileObject, err := os.Open(inputFilePath)
