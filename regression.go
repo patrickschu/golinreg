@@ -19,7 +19,7 @@ type LinReg struct {
 	coefs     []float64
 }
 
-//Compute errors of `preds` vs `truth`
+//GetErrors of `preds` vs `truth`
 func GetErrors(preds, truth []float64) ([]float64, error) {
 	//check that preds and truth same length
 	if len(preds) != len(truth) || len(preds) == 0 {
@@ -48,6 +48,7 @@ func SquareVector(x []float64) ([]float64, error) {
 
 }
 
+//ComputeGradient -- NOT USED
 func ComputeGradient() (float64, error) {
 	return 1, nil
 }
@@ -62,8 +63,8 @@ func SumVector(x []float64) (float64, error) {
 	return sum, nil
 }
 
+//Mean of vector x
 func Mean(x []float64) (float64, error) {
-	//sum
 	vectorsum, _ := SumVector(x)
 	mean := vectorsum / float64(len(x))
 	return mean, nil
@@ -112,21 +113,6 @@ func AddtoVector(x []float64, add float64) ([]float64, error) {
 	return outputVector, nil
 }
 
-//Compute the covariance between two vectors
-/*
-Cov(X,Y) = Σ
-E(
-	(X-μ)
-	E(Y-ν)
-	) / n-1 where:
-X is a random variable
-E(X) = μ is the expected value (the mean) of the random variable X and
-E(Y) = ν is the expected value (the mean) of the random variable Y
-n = the number of items in the data set
-
-
-*/
-
 // Covariance between x and y (uses n-1)
 func Covariance(x, y []float64) (float64, error) {
 	if len(x) != len(y) {
@@ -173,5 +159,3 @@ func Regressor(x []float64, y []float64) (LinReg, error) {
 // B1 = sum((x(i) - mean(x)) * (y(i) - mean(y))) / sum( (x(i) - mean(x))^2 )
 // B0 = mean(y) - B1 * mean(x)
 // B1 = covariance(x, y) / variance(x)
-
-//check weights for fit
